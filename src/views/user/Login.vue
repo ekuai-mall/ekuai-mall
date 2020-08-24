@@ -28,7 +28,36 @@ export default {
 	}),
 	methods: {
 		login() {
-
+			this.$axios.$post("?_=auth/login", {
+				user: this.user,
+				pass: this.password,
+			}).then(response => {
+				if (response.status === 200) {
+					if (response.data.status === 0) {
+						this.$success({
+							title: "登录成功",
+							content: "即将跳转，若无法跳转请刷新页面",
+						});
+					} else {
+						this.$warning({
+							title: "登录失败",
+							content: "错误码：" + response.data.status + "，错误信息：" + response.data.ret,
+						});
+					}
+				} else {
+					this.$error({
+						title: "网络错误",
+						content: response.status + "：" + response.statusText,
+					});
+				}
+				console.log(response);
+			}).catch(error => {
+				this.$error({
+					title: "网络错误",
+					content: error,
+				});
+				console.log(error);
+			});
 		},
 	},
 };
