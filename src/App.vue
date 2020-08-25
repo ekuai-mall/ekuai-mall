@@ -26,6 +26,9 @@ export default {
 				case "account":
 					ret = "user";
 					break;
+				case "item":
+					ret = "item";
+					break;
 			}
 			this.$store.commit("Run/updateCurrentTab", ret);
 		});

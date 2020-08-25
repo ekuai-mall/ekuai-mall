@@ -25,3 +25,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## 功能实现
 - Auth：登陆注册改密
+- Good：商品信息查询、搜索
+    - 商品详情页
+    - 商品内容（小）
