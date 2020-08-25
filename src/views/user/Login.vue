@@ -11,7 +11,7 @@
 			</a-input-password>
 		</div>
 		<div class="margin-10">
-			<a-button type="primary" @click="login" :disable="password.length!==0 && user.length!==0">
+			<a-button type="primary" @click="login" :disabled="password.length===0 || user.length===0">
 				登陆
 			</a-button>
 		</div>
@@ -33,7 +33,8 @@ export default {
 				pass: this.password,
 			}).then(response => {
 				if (response.status === 200) {
-					if (response.data.status === 0) {
+					let dat = response.data;
+					if (dat.status === 0) {
 						this.$success({
 							title: "登录成功",
 							content: "即将跳转，若无法跳转请刷新页面",
@@ -41,7 +42,7 @@ export default {
 					} else {
 						this.$warning({
 							title: "登录失败",
-							content: "错误码：" + response.data.status + "，错误信息：" + response.data.ret,
+							content: "错误码：" + dat.status + "，错误信息：" + dat["ret"],
 						});
 					}
 				} else {
@@ -59,6 +60,15 @@ export default {
 				console.log(error);
 			});
 		},
+	},
+	mounted() {
+		let defaultUser = this.$store.state.User;
+		if (defaultUser.username !== "") {
+			this.user = defaultUser.username;
+		}
+		if (defaultUser.pass !== "") {
+			this.password = defaultUser.pass;
+		}
 	},
 };
 </script>

@@ -49,6 +49,7 @@ export default {
 }
 
 .container {
+	margin: 60px;
 	background-color: rgba(255, 255, 255, 0.5);
 	border-radius: 5px;
 	box-shadow: 0 20px 60px rgba(102, 204, 255, 0.5), 0 0 150px rgba(102, 204, 255, 0.5);
