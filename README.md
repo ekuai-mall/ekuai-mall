@@ -28,3 +28,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - Good：商品信息查询、搜索
     - 商品详情页
     - 商品内容（小）
+- Order：商品下单
+- Pay：支付
+    - 微信支付（WxPay）

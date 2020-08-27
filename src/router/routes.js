@@ -18,6 +18,14 @@ const routesRaw = [{
 		component: () => import( /* webpackChunkName: "mall" */ "@/views/item/Item.vue"),
 	}],
 }, {
+	path: "/pay",
+	redirect: "/",
+	component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
+	children: [{
+		path: "wechat/:order",
+		component: () => import( /* webpackChunkName: "pay" */ "@/views/pay/Wechat.vue"),
+	}],
+}, {
 	path: "*",
 	component: () => import( /* webpackChunkName: "error" */ "@/views/error/404.vue"),
 }];
