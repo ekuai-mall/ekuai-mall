@@ -2,20 +2,20 @@
 	<div class="container">
 		<a-spin tip="Loading..." size="large" :spinning="onLoading">
 			<a-row>
-				<a-col :span="8">
-					<img src="//img11.360buyimg.com/n1/s450x450_jfs/t1/124728/34/9676/165062/5f3a2b82Eb3862806/58da0d931de15fe0.jpg" alt="">
+				<a-col :span="8" class="imgContainer">
+					<img :src="itemInfo.img" alt="" class="img">
 				</a-col>
-				<a-col :span="16">
+				<a-col :span="16" class="detailContainer">
 					<a-row>
-						三星（SAMSUNG）15.6英寸Galaxy Book Flex 2020款触屏超轻薄二合一笔记本电脑(十代i7/16G/1T SSD)银
+						<h2>{{ itemInfo.name }}</h2>
+					</a-row>
+					<a-row>
+						{{ itemInfo.detail }}
 					</a-row>
 					<a-row>
 						<a-menu mode="inline" @click="handleClick">
-							<a-menu-item key="5">
-								Option 5
-							</a-menu-item>
-							<a-menu-item key="6">
-								Option 6
+							<a-menu-item v-for="(item, index) in itemInfo.child" :key="index">
+								{{ item.name }} - ￥{{ item.price / 100 }}
 							</a-menu-item>
 						</a-menu>
 					</a-row>
@@ -33,10 +33,15 @@ export default {
 		itemId: -1,
 		itemInfo: {},
 	}),
+	methods: {
+		handleClick(e) {
+			console.log(e);
+		},
+	},
 	mounted() {
 		// this.onLoading = true;
 		this.itemId = this.$route.params.id;
-		this.$axios.$get("?_=item/" + this.itemId)
+		this.$axios.$get("?_=item/get/" + this.itemId)
 			.then(response => {
 				if (response.status === 200) {
 					let dat = response.data;
@@ -71,5 +76,17 @@ export default {
 .container {
 	max-width: 1210px;
 	margin: 40px auto;
+}
+
+.imgContainer {
+	padding: 0 20px;
+}
+
+.detailContainer {
+	padding: 0 90px;
+}
+
+.img {
+	width: 360px;
 }
 </style>
