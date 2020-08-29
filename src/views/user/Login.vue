@@ -37,8 +37,14 @@ export default {
 					if (dat.status === 0) {
 						this.$success({
 							title: "登录成功",
-							content: "即将跳转，若无法跳转请刷新页面",
+							content: "即将跳转至登录前页面，若无法跳转请刷新页面",
 						});
+						this.$store.commit("User/updateUserInfo", dat["ret"]);
+						if (this.$route.query.redirect) {
+							this.$router.push(this.$route.query.redirect);
+						} else {
+							this.$router.push("/");
+						}
 					} else {
 						this.$warning({
 							title: "登录失败",

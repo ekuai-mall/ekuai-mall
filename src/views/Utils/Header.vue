@@ -10,6 +10,10 @@
 						<a-icon type="user"/>
 						用户
 					</a-menu-item>
+					<a-menu-item key="item" class="menu-item">
+						<a-icon type="shop"/>
+						商品
+					</a-menu-item>
 				</a-menu>
 			</a-col>
 		</a-row>
@@ -43,8 +47,8 @@ export default {
 
 <style scoped>
 #header {
-	box-shadow: 0 2px 8px #f0f1f2;
 	background-color: #fff;
+	box-shadow: 0 2px 8px #f0f1f2;
 }
 
 .logo {

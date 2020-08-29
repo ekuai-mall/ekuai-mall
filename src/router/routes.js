@@ -11,9 +11,12 @@ const routesRaw = [{
 	}],
 }, {
 	path: "/item",
-	redirect: "/",
+	redirect: "/item/search",
 	component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
 	children: [{
+		path: "search",
+		component: () => import( /* webpackChunkName: "mall" */ "@/views/item/Search.vue"),
+	},{
 		path: ":id",
 		component: () => import( /* webpackChunkName: "mall" */ "@/views/item/Item.vue"),
 	}],

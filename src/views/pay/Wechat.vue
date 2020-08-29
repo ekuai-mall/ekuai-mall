@@ -22,9 +22,9 @@
 						<dd id="storeName">{{ order ? order.name : "Loading" }}</dd>
 						<dt>订单号</dt>
 						<dd id="billId">{{ $route.params.order }}</dd>
-						<dt>时间</dt>
+						<dt>下单时间</dt>
 						<dd id="createTime">{{ time }}</dd>
-						<dt>留言</dt>
+						<dt>备注留言</dt>
 						<dd id="remark">{{ order ? order["remark"] : "Loading" }}</dd>
 					</dl>
 				</div>
