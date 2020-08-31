@@ -15,7 +15,7 @@
 				<a-icon slot="addonBefore" type="key"/>
 			</a-input-password>
 		</div>
-		<a-alert v-show="password1!==password" message="两次密码输入不一致，请重试" type="warning" show-icon/>
+		<a-alert v-show="password1!==password" message="两次密码输入不一致，请检查输入" type="warning" show-icon/>
 		<div class="margin-10">
 			<a-button type="primary" @click="register" :disabled="password1.length===0 || password.length===0 || user.length===0 || password1!==password">
 				注册

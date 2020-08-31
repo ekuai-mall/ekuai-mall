@@ -54,6 +54,7 @@ export default {
 .logo {
 	margin: 15px;
 	font-size: large;
+	white-space: nowrap;
 	cursor: pointer;
 }
 

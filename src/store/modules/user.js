@@ -7,7 +7,7 @@ const User = {
 		pass: "",
 	}),
 	mutations: {
-		updateUserInfo(state, e) {
+		updateUserInfo(state, e = {}) {
 			state.id = e.id ? e.id : -1;
 			state.cookie = e.cookie ? e.cookie : "";
 			state.username = e.user ? e.user : "";

@@ -10,13 +10,30 @@ const routesRaw = [{
 		component: () => import( /* webpackChunkName: "user" */ "@/views/user/Register.vue"),
 	}],
 }, {
+	path: "/account",
+	redirect: "/account/info",
+	component: () => import( /* webpackChunkName: "user" */ "@/views/account/Account.vue"),
+	children: [{
+		path: "info",
+		component: () => import( /* webpackChunkName: "user" */ "@/views/account/Info.vue"),
+	}, {
+		path: "password",
+		component: () => import( /* webpackChunkName: "user" */ "@/views/account/ChangePass.vue"),
+	}, {
+		path: "wechat",
+		component: () => import( /* webpackChunkName: "user" */ "@/views/account/BindWechat.vue"),
+	}, {
+		path: "logout",
+		component: () => import( /* webpackChunkName: "user" */ "@/views/account/Logout.vue"),
+	}],
+}, {
 	path: "/item",
 	redirect: "/item/search",
 	component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
 	children: [{
 		path: "search",
 		component: () => import( /* webpackChunkName: "mall" */ "@/views/item/Search.vue"),
-	},{
+	}, {
 		path: ":id",
 		component: () => import( /* webpackChunkName: "mall" */ "@/views/item/Item.vue"),
 	}],
