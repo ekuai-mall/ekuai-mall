@@ -3,7 +3,6 @@ import App from "./App.vue";
 import Router from "./router";
 import axios from "axios";
 import qs from "qs";
-import VueCookies from "vue-cookies";
 import Store from "./store";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
@@ -22,7 +21,6 @@ Vue.prototype["$axios"] = {
 	},
 	...axios,
 };
-Vue.use(VueCookies);
 Vue.use(Antd);
 Vue.config.productionTip = false;
 

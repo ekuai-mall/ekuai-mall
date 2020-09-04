@@ -106,15 +106,6 @@ export default {
 		},
 	},
 	mounted() {
-		let user = this.$store.state.User;
-		if (user.id === -1 || user.cookie.length === 0) {
-			this.$warning({
-				title: "鉴权错误",
-				content: "请先登录",
-			});
-			this.$router.push("/user/login");
-		}
-
 		this.refresh();
 	},
 };

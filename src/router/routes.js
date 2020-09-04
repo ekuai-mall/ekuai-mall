@@ -38,6 +38,17 @@ const routesRaw = [{
 		component: () => import( /* webpackChunkName: "mall" */ "@/views/item/Item.vue"),
 	}],
 }, {
+	path: "/order",
+	redirect: "/order/list",
+	component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
+	children: [{
+		path: "list",
+		component: () => import( /* webpackChunkName: "order" */ "@/views/order/List.vue"),
+	}, {
+		path: ":order",
+		component: () => import( /* webpackChunkName: "order" */ "@/views/order/Order.vue"),
+	}],
+}, {
 	path: "/pay",
 	redirect: "/",
 	component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
@@ -46,8 +57,11 @@ const routesRaw = [{
 		component: () => import( /* webpackChunkName: "pay" */ "@/views/pay/Wechat.vue"),
 	}],
 }, {
+	path: "/redirect",
+	component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/Redirect.vue"),
+}, {
 	path: "*",
-	component: () => import( /* webpackChunkName: "error" */ "@/views/error/404.vue"),
+	component: () => import( /* webpackChunkName: "util" */ "@/views/error/404.vue"),
 }];
 
 export default routesRaw;

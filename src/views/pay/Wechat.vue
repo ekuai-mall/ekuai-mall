@@ -4,7 +4,10 @@
 			<h1 class="mod-title">
 				<span class="ico-wechat"></span><span class="text">微信支付</span>
 			</h1>
-			<div class="mod-ct">
+			<div v-if="finished">
+				<a-result status="success" :title="title" :sub-title="subTitle"/>
+			</div>
+			<div v-else class="mod-ct">
 				<div class="order"></div>
 				<div class="amount">￥{{ price }}</div>
 				<div class="qr-image" id="qrcode">
@@ -56,6 +59,8 @@ export default {
 		loading: true,
 		order: null,
 		openWx: false,
+		finished: false,
+		redirectTime: 5,
 	}),
 	computed: {
 		time() {
@@ -71,6 +76,12 @@ export default {
 		},
 		price() {
 			return this.order ? this.order.price / 100 : 0;
+		},
+		title() {
+			return "订单 " + this.$route.params.order + " 支付成功";
+		},
+		subTitle() {
+			return this.redirectTime + "秒后将自动跳转到订单页面，若未跳转，请在用户中心查看";
 		},
 	},
 	methods: {
@@ -124,27 +135,69 @@ export default {
 						});
 					}
 				});
+				this.check();
 			}
 
-			// // 订单详情
-			// var orderDetail = $("#orderDetail");
-			// orderDetail.find(".arrow").click(function (event) {
-			// 	if (orderDetail.hasClass("detail-open")) {
-			// 		orderDetail.find(".detail-ct").slideUp(500, function () {
-			// 			orderDetail.removeClass("detail-open");
-			// 		});
-			// 	} else {
-			// 		orderDetail.find(".detail-ct").slideDown(500, function () {
-			// 			orderDetail.addClass("detail-open");
-			// 		});
-			// 	}
-			// });
 
 			// call app
 			if (navigator.userAgent.match(/(iPhone|iPod|Android|ios|SymbianOS)/i) !== null) {
 				this.openWx = true;
 			}
 			this.loading = false;
+		},
+		check() {
+			if (!this || this._isDestroyed) {
+				return;
+			}
+			this.$axios.$post("?_=pay/checkOrder", {
+				order: this.$route.params.order,
+			}).then(response => {
+				if (response.status === 200) {
+					let dat = response.data;
+					if (dat.status === 0) {
+						let status = dat["ret"];
+						console.log(dat);
+						if (status === "SUCCESS") {
+							this.finish();
+						} else {
+							setTimeout(this.check, 2000);
+						}
+					} else {
+						this.$notification.error({
+							message: "订单获取错误，请刷新页面重试",
+							description: dat["ret"],
+						});
+					}
+				} else {
+					this.$error({
+						title: "网络错误",
+						content: response.status + "：" + response.statusText,
+					});
+				}
+				console.log(response);
+			}).catch(error => {
+				this.$error({
+					title: "网络错误",
+					content: error,
+				});
+				console.log(error);
+			});
+		},
+		finish() {
+			this.finished = true;
+			this.loading = false;
+			setTimeout(this.timer, 1000);
+		},
+		timer() {
+			if (!this || this._isDestroyed) {
+				return;
+			}
+			this.redirectTime -= 1;
+			if (this.redirectTime === -1) {
+				this.$router.push("/order/" + this.$route.params.order);
+			}
+			console.log("timer");
+			setTimeout(this.timer, 1000);
 		},
 	},
 	mounted() {
@@ -155,7 +208,11 @@ export default {
 				let dat = response.data;
 				if (dat.status === 0) {
 					this.order = dat["ret"];
-					this.init();
+					if (dat["ret"].status === "SUCCESS") {
+						this.finish();
+					} else {
+						this.init();
+					}
 				} else {
 					this.$warning({
 						title: "订单获取失败",

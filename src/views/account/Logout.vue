@@ -1,6 +1,8 @@
 <template>
 	<div>
-		<a-button type="primary" shape="round" size="large" @click="logout" >
+		<a-page-header class="header" title="登出" sub-title="在此登出账号"/>
+		<br/><br/>
+		<a-button type="primary" shape="round" size="large" @click="logout">
 			确认登出
 		</a-button>
 	</div>
@@ -43,5 +45,9 @@ export default {
 </script>
 
 <style scoped>
-
+.header {
+	max-width: 90%;
+	margin: 10px;
+	border: 1px solid rgb(235, 237, 240);
+}
 </style>

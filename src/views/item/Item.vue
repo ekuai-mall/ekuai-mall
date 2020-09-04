@@ -84,8 +84,7 @@ export default {
 					content: "需要选中商品后才可购买商品",
 				});
 				return false;
-			}
-			{
+			} else {
 				this.draw = true;
 				return true;
 			}
