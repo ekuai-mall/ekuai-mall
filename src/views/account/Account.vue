@@ -37,11 +37,6 @@
 <script>
 export default {
 	name: "Account",
-	methods: {
-		// handleClick({key}) {
-		// 	this.$router.push(key);
-		// },
-	},
 	computed: {
 		currentSelected: {
 			get() {

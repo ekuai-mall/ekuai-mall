@@ -18,7 +18,7 @@
 					</a-button>
 				</div>
 				<div v-else class="qr-image" id="qrcode">
-					<canvas id="qrCanvas"></canvas>
+					<img :src="src" alt="qrcode">
 				</div>
 				<div class="detail" id="orderDetail">
 					<dl class="detail-ct" style="display: block">
@@ -66,6 +66,7 @@ export default {
 		redirectTime: 5,
 		jsPayDat: null,
 		jsPaid: false,
+		src: "",
 	}),
 	computed: {
 		time() {
@@ -136,16 +137,17 @@ export default {
 					}
 				}
 			} else {
-				// 普通扫码
 				let QRCode = require("qrcode");
-				let canvas = document.getElementById("qrCanvas");
-				QRCode.toCanvas(canvas, this.order.url, {errorCorrectionLevel: "H"}, function (error) {
+				let that = this;
+				QRCode.toDataURL(this.order.url, {errorCorrectionLevel: "H"}, function (error, url) {
 					if (error) {
 						console.error(error);
-						this.$error({
+						that.$error({
 							title: "系统错误",
 							content: "二维码生成失败",
 						});
+					} else {
+						that.src = url;
 					}
 				});
 				this.check();

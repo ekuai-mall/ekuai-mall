@@ -33,4 +33,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
     - 商品内容（小）
 - Order：商品下单
 - Pay：支付
-    - 微信支付（WxPay）
+    - 微信支付（Native+JsApi）

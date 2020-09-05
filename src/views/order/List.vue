@@ -30,7 +30,7 @@
 				</a-descriptions-item>
 			</a-descriptions>
 		</a-card>
-		<a-empty description="来到了数据的尽头"/>
+		<a-empty class="margin-10" description="来到了数据的尽头"/>
 	</div>
 
 </template>
@@ -72,7 +72,7 @@ export default {
 			if (response.status === 200) {
 				let dat = response.data;
 				if (dat.status === 0) {
-					this.orderList = dat["ret"];
+					this.orderList = dat["ret"].reverse();
 					this.$notification.success({
 						message: "成功",
 						description: "订单信息数据拉取成功",

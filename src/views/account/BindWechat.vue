@@ -14,7 +14,7 @@
 
 		<a-card title="扫描下方二维码绑定/修改微信" class="qr-container">
 			<div>
-				<canvas id="qrCanvas"></canvas>
+				<img :src="src" alt="qrcode">
 			</div>
 		</a-card>
 	</div>
@@ -25,6 +25,7 @@ export default {
 	name: "BindWechat",
 	data: () => ({
 		wechat: "",
+		src: "",
 	}),
 	methods: {
 		refreshWechat() {
@@ -114,15 +115,16 @@ export default {
 					let callBack = window.location.protocol + "//" + window.location.host + window.location.pathname;
 					callBack = callBack.substring(0, callBack.lastIndexOf("/") + 1) + "api/server.php";
 					let url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + this.$store.state.Run.wxAppId + "&redirect_uri=" + callBack + "&response_type=code&scope=snsapi_userinfo&state=" + state;
-					let canvas = document.getElementById("qrCanvas");
 					let that = this;
-					QRCode.toCanvas(canvas, url, {errorCorrectionLevel: "H"}, function (error) {
+					QRCode.toDataURL(url, {errorCorrectionLevel: "H"}, function (error,url) {
 						if (error) {
 							console.error(error);
 							that.$error({
 								title: "系统错误",
 								content: "二维码生成失败",
 							});
+						}else{
+							that.src=url;
 						}
 					});
 					this.refreshWechat();
