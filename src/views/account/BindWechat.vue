@@ -110,7 +110,7 @@ export default {
 						description: "个人信息数据拉取成功",
 					});
 					let QRCode = require("qrcode");
-					let state = this.$store.state.User.id + "/" + this.$store.state.User.cookie;
+					let state = this.$store.state.User.id + "|" + this.$store.state.User.cookie;
 					let callBack = window.location.protocol + "//" + window.location.host + window.location.pathname;
 					callBack = callBack.substring(0, callBack.lastIndexOf("/") + 1) + "api/server.php";
 					let url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + this.$store.state.Run.wxAppId + "&redirect_uri=" + callBack + "&response_type=code&scope=snsapi_userinfo&state=" + state;

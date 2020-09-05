@@ -10,12 +10,15 @@
 			<div v-else class="mod-ct">
 				<div class="order"></div>
 				<div class="amount">￥{{ price }}</div>
-				<div class="qr-image" id="qrcode">
-					<canvas id="qrCanvas"></canvas>
+				<div v-if="openWx" id="open-app-container">
+					<a-result title="请在弹出的微信界面支付"/>
+					<a-alert v-if="jsPaid" message="微信支付完成，系统处理中，请稍后" type="success" show-icon/>
+					<a-button v-else type="primary" @click="jsApiPay">
+						点击支付
+					</a-button>
 				</div>
-				<div id="open-app-container" v-show="openWx">
-					<span style="display: block;margin-top: 24px">请截屏此界面或保存二维码，打开微信扫码，选择相册图片</span>
-					<a style="display: inline-block;margin-top: 8px;padding:6px 34px;border:1px solid #e5e5e5" id="open-app" href="weixin://">点击打开微信</a>
+				<div v-else class="qr-image" id="qrcode">
+					<canvas id="qrCanvas"></canvas>
 				</div>
 				<div class="detail" id="orderDetail">
 					<dl class="detail-ct" style="display: block">
@@ -61,11 +64,13 @@ export default {
 		openWx: false,
 		finished: false,
 		redirectTime: 5,
+		jsPayDat: null,
+		jsPaid: false,
 	}),
 	computed: {
 		time() {
 			if (this.order) {
-				let time = new Date(this.order["time_start"] * 10000),
+				let time = new Date(this.order["time_start"] * 1000),
 					y = time.getFullYear(),
 					m = time.getMonth() + 1,
 					d = time.getDate();
@@ -86,42 +91,50 @@ export default {
 	},
 	methods: {
 		init() {
-			if (navigator.userAgent.match(/MicroMessenger/i) !== null && this.order.url.indexOf("http") === 0) {
-				// 当前在微信内, URL直接跳转
-				location.href = this.order.url;
-			} else if (navigator.userAgent.match(/MicroMessenger/i) !== null && this.order.url.indexOf("weixin://") === -1) {
-				// 当前在微信内, code_url是JSAPI参数
-				// $(".tip>.ico-scan").remove();
-				// $(".tip>.tip-text").html("<p>请在弹出的窗口完成支付</p>");
-				// $("#open-app-container").html("<p></p>");
-				// $("#orderDetail>.detail-ct").show();
-				// $("#orderDetail>.arrow").remove();
-				//
-				// function onBridgeReady() {
-				// 	WeixinJSBridge.invoke(
-				// 		"getBrandWCPayRequest", JSON.parse(code_url),
-				// 		function (res) {
-				// 			if (res.err_msg === "get_brand_wcpay_request:fail") {
-				// 				$(".tip>.tip-text").html("<p>支付失败</p><p>" + res.err_desc + "</p>");
-				// 				alert(res.err_desc);
-				// 			} else if (res.err_msg === "get_brand_wcpay_request:ok") {
-				// 				//使用以上方式判断前端返回,微信团队郑重提示：
-				// 				//res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-				// 				$(".tip>.tip-text").html("<p>订单已支付, 正在处理...</p>");
-				// 			}
-				// 		});
-				// }
-				//
-				// if (typeof WeixinJSBridge === "undefined") {
-				// 	if (document.addEventListener) {
-				// 		document.addEventListener("WeixinJSBridgeReady", onBridgeReady, false);
-				// 	} else if (document.attachEvent) {
-				// 		document.attachEvent("WeixinJSBridgeReady", onBridgeReady);
-				// 		document.attachEvent("onWeixinJSBridgeReady", onBridgeReady);
-				// 	}
-				// } else {
-				// 	onBridgeReady();
-				// }
+			if (this.order.url === "JSAPI") {
+				if (navigator.userAgent.match(/MicroMessenger/i) === null) {
+					this.$error({
+						title: "系统错误",
+						content: "请在微信中支付本订单",
+					});
+				} else {
+					if (!this.$route.params.code) {
+						let callBack = window.location.protocol + "//" + window.location.host + window.location.pathname;
+						callBack = callBack.substring(0, callBack.lastIndexOf("/") + 1);
+						let url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + this.$store.state.Run.wxAppId + "&redirect_uri=" + callBack + "api/server.php&response_type=code&scope=snsapi_base&state=jsapi|" + btoa(callBack + "#/pay/wechat/" + this.order.order) + "#wechat_redirect";
+						location.href = url;
+					} else {
+						this.$axios.$post("?_=pay/generateOrder", {
+							code: this.$route.params.code,
+							order: this.order.order,
+						}).then(response => {
+							if (response.status === 200) {
+								let dat = response.data;
+								if (dat.status === 0) {
+									this.jsPayDat = dat["ret"];
+									this.openWx = true;
+								} else {
+									this.$notification.error({
+										message: "订单获取错误，请重试",
+										description: dat["ret"],
+									});
+								}
+							} else {
+								this.$error({
+									title: "网络错误",
+									content: response.status + "：" + response.statusText,
+								});
+							}
+							console.log(response);
+						}).catch(error => {
+							this.$error({
+								title: "网络错误",
+								content: error,
+							});
+							console.log(error);
+						});
+					}
+				}
 			} else {
 				// 普通扫码
 				let QRCode = require("qrcode");
@@ -137,13 +150,31 @@ export default {
 				});
 				this.check();
 			}
-
-
-			// call app
-			if (navigator.userAgent.match(/(iPhone|iPod|Android|ios|SymbianOS)/i) !== null) {
-				this.openWx = true;
-			}
 			this.loading = false;
+		},
+		jsApiPay() {
+			if (window.WeixinJSBridge) {
+				let that = this;
+				window.WeixinJSBridge.invoke(
+					"getBrandWCPayRequest", this.jsPayDat,
+					function (res) {
+						if (res.err_msg === "get_brand_wcpay_request:fail") {
+							that.$error({
+								title: "订单支付失败",
+								content: "请刷新页面重试",
+							});
+						} else if (res.err_msg === "get_brand_wcpay_request:ok") {
+							that.jsPaid = true;
+							that.check();
+						}
+					});
+			} else {
+				this.$error({
+					title: "微信支付错误",
+					content: "请重试",
+				});
+			}
+
 		},
 		check() {
 			if (!this || this._isDestroyed) {

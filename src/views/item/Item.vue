@@ -101,7 +101,7 @@ export default {
 						if (dat.status === 0) {
 							this.$success({
 								title: "下单成功",
-								content: "请在此页使用微信支付，有效期2小时",
+								content: "请在此页使用微信支付，有效期10分钟",
 							});
 							this.$router.push("/pay/wechat/" + dat["ret"]);
 						} else {

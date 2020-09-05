@@ -46,7 +46,7 @@ export default {
 			this.$router.push("/order/" + this.orderList[e].order);
 		},
 		getTime(e) {
-			let time = new Date(e * 10000),
+			let time = new Date(e * 1000),
 				y = time.getFullYear(),
 				m = time.getMonth() + 1,
 				d = time.getDate();

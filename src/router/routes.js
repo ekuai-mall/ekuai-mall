@@ -53,7 +53,7 @@ const routesRaw = [{
 	redirect: "/",
 	component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
 	children: [{
-		path: "wechat/:order",
+		path: "wechat/:order/:code?",
 		component: () => import( /* webpackChunkName: "pay" */ "@/views/pay/Wechat.vue"),
 	}],
 }, {
