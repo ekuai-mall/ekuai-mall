@@ -34,6 +34,9 @@
 						<dd id="remark">{{ order ? order["remark"] : "Loading" }}</dd>
 					</dl>
 				</div>
+				<a-button type="primary" @click="forceCheck">
+					强制查单
+				</a-button>
 				<div class="tip">
 					<span class="dec dec-left"></span>
 					<span class="dec dec-right"></span>
@@ -67,6 +70,7 @@ export default {
 		jsPayDat: null,
 		jsPaid: false,
 		src: "",
+		checking: false,
 	}),
 	computed: {
 		time() {
@@ -136,6 +140,8 @@ export default {
 						});
 					}
 				}
+			} else if (this.order.url.indexOf("http") > -1) {
+				this.openWx = true;
 			} else {
 				let QRCode = require("qrcode");
 				let that = this;
@@ -150,38 +156,43 @@ export default {
 						that.src = url;
 					}
 				});
-				this.check();
+				this.checking || this.check();
 			}
 			this.loading = false;
 		},
 		jsApiPay() {
-			if (window.WeixinJSBridge) {
-				let that = this;
-				window.WeixinJSBridge.invoke(
-					"getBrandWCPayRequest", this.jsPayDat,
-					function (res) {
-						if (res.err_msg === "get_brand_wcpay_request:fail") {
-							that.$error({
-								title: "订单支付失败",
-								content: "请刷新页面重试",
-							});
-						} else if (res.err_msg === "get_brand_wcpay_request:ok") {
-							that.jsPaid = true;
-							that.check();
-						}
+			if (this.order.url === "JSAPI") {
+				if (window.WeixinJSBridge) {
+					let that = this;
+					window.WeixinJSBridge.invoke(
+						"getBrandWCPayRequest", this.jsPayDat,
+						function (res) {
+							if (res.err_msg === "get_brand_wcpay_request:fail") {
+								that.$error({
+									title: "订单支付失败",
+									content: "请刷新页面重试",
+								});
+							} else if (res.err_msg === "get_brand_wcpay_request:ok") {
+								that.jsPaid = true;
+								that.checking || that.check();
+							}
+						});
+				} else {
+					this.$error({
+						title: "微信支付错误",
+						content: "请重试",
 					});
+				}
 			} else {
-				this.$error({
-					title: "微信支付错误",
-					content: "请重试",
-				});
+				localStorage.setItem("wxPayCheck", "true");
+				location.href = this.order.url;
 			}
-
 		},
 		check() {
 			if (!this || this._isDestroyed) {
 				return;
 			}
+			this.checking = true;
 			this.$axios.$post("?_=pay/checkOrder", {
 				order: this.$route.params.order,
 			}).then(response => {
@@ -225,15 +236,34 @@ export default {
 			if (!this || this._isDestroyed) {
 				return;
 			}
-			this.redirectTime -= 1;
-			if (this.redirectTime === -1) {
+			if (this.redirectTime === 0) {
 				this.$router.push("/order/" + this.$route.params.order);
 			}
+			this.redirectTime -= 1;
 			console.log("timer");
 			setTimeout(this.timer, 1000);
 		},
+		forceCheck() {
+			if (this.checking) {
+				this.$info({
+					title: "提示",
+					content: "查单线程已开启，请勿重复操作",
+				});
+			} else {
+				this.check();
+				this.$notification.success({
+					message: "查单线程已开启",
+					description: "正在查单，请稍后，若长时间无反应请联系客服",
+				});
+
+			}
+		},
 	},
 	mounted() {
+		if (localStorage.getItem("wxPayCheck") === "true") {
+			localStorage.removeItem("wxPayCheck");
+			this.check();
+		}
 		this.$axios.$post("?_=pay/getOrder", {
 			order: this.$route.params.order,
 		}).then(response => {

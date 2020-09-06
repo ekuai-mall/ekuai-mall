@@ -4,6 +4,7 @@ const Run = {
 		currentTab: [],
 		wxAppId: "",
 		mallTitle: "",
+		homeImg: "",
 	}),
 	mutations: {
 		updateCurrentTab(state, e) {

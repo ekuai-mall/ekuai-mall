@@ -1,10 +1,10 @@
 <template>
 	<div class="container">
 		<a-page-header class="header" title="搜索" sub-title="在此搜索商品"/>
-		<a-input-search placeholder="在此输入搜索内容" enter-button @search="onSearch"/>
+		<a-input-search v-model="key" placeholder="在此输入搜索内容" enter-button @search="onSubmit"/>
 		<div class="margin-10">
 			<a-row>
-				<a-col :md="12" :sm="24" v-for="(val,index) in items" :key="index">
+				<a-col :md="12" :sm="24" v-for="(val,index) in items" :key="index" class="padding-10">
 					<a-card class="margin-10" hoverable style="width: 240px;margin: auto" @click="redirect(index)">
 						<img slot="cover" :alt="val.name" :src="val.img[0].img"/>
 						<a-card-meta :title="val.name">
@@ -25,11 +25,16 @@ export default {
 	name: "ItemSearch",
 	data: () => ({
 		items: [],
+		key: "",
 	}),
 	methods: {
-		onSearch(val) {
+		onSubmit() {
+			this.$router.push("/item/search/" + this.key);
+			this.onSearch();
+		},
+		onSearch() {
 			this.$axios.$post("?_=item/search", {
-				key: val,
+				key: this.key,
 			}).then(response => {
 				if (response.status === 200) {
 					let dat = response.data;
@@ -65,7 +70,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.onSearch("");
+		this.key = this.$route.params.key;
+		this.onSearch();
 	},
 };
 </script>
