@@ -17,13 +17,13 @@
 					{{ getTime(val["time_start"]) }}
 				</a-descriptions-item>
 				<a-descriptions-item label="支付状态">
-					{{ getPayStatus(val.status) }}
+					<clr :clr="(getClr(val.status))">{{ getPayStatus(val.status) }}</clr>
 				</a-descriptions-item>
 				<a-descriptions-item label="支付时间" :span="2">
 					{{ val["time_finish"] ? getTime(val["time_finish"]) : "/" }}
 				</a-descriptions-item>
 				<a-descriptions-item label="订单状态">
-					功能开发中
+					<clr :clr="(getClr(val.extra))">{{ getExtra(val.extra) }}</clr>
 				</a-descriptions-item>
 				<a-descriptions-item label="备注" :span="3">
 					{{ val["remark"] }}
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import Clr from "../Utils/Color.vue";
+
 export default {
 	name: "List",
 	data: () => ({
@@ -62,6 +64,25 @@ export default {
 				"REVOKED": "支付撤销",
 			};
 			return dat[e] ? dat[e] : "Unknown status";
+		},
+		getExtra(e) {
+			e = e ? e : "NULL";
+			let dat = {
+				"NULL": "未使用",
+				"SUBMIT": "已提交",
+				"FINISH": "已完成",
+			};
+			return dat[e] ? dat[e] : "Unknown status";
+		},
+		getClr(e) {
+			e = e ? e : "NULL";
+			let dat = {
+				"SUBMIT": "#66ccff",
+				"FINISH": "green",
+				"SUCCESS": "green",
+				"NOTPAY": "red",
+			};
+			return dat[e] ? dat[e] : "black";
 		},
 	},
 	mounted() {
@@ -97,6 +118,9 @@ export default {
 			});
 			console.log(error);
 		});
+	},
+	components: {
+		Clr,
 	},
 };
 </script>

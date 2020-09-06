@@ -1,7 +1,7 @@
 const routesRaw = [{
 	path: "/",
 	component: () => import( /* webpackChunkName: "util" */ "@/views/Home.vue"),
-},{
+}, {
 	path: "/user",
 	redirect: "/user/login",
 	component: () => import( /* webpackChunkName: "user" */ "@/views/user/User.vue"),
@@ -47,6 +47,17 @@ const routesRaw = [{
 	children: [{
 		path: "list",
 		component: () => import( /* webpackChunkName: "order" */ "@/views/order/List.vue"),
+	}, {
+		path: "plugin",
+		component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
+		children: [{
+			path: "upload",
+			component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
+			children: [{
+				path: ":order",
+				component: () => import( /* webpackChunkName: "plugin" */ "@/views/plugin/upload/Upload.vue"),
+			}],
+		}],
 	}, {
 		path: ":order",
 		component: () => import( /* webpackChunkName: "order" */ "@/views/order/Order.vue"),
