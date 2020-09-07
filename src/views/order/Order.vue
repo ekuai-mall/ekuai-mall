@@ -2,7 +2,7 @@
 	<div class="container">
 		<a-page-header class="header" title="订单详情" :sub-title="this.$route.params.order"/>
 		<div>
-			<a-descriptions>
+			<a-descriptions v-if="loaded">
 				<a-descriptions-item label="下单用户">
 					{{ order.user.user }}
 				</a-descriptions-item>
@@ -47,6 +47,7 @@ export default {
 	name: "Order",
 	data: () => ({
 		order: null,
+		loaded: false,
 	}),
 	methods: {
 		getTime(e) {
@@ -116,6 +117,7 @@ export default {
 				let dat = response.data;
 				if (dat.status === 0) {
 					this.order = dat["ret"];
+					this.loaded = true;
 				} else {
 					this.$warning({
 						title: "订单获取失败",

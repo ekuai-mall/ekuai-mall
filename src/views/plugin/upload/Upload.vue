@@ -9,11 +9,11 @@ export default {
 	name: "Upload",
 	mounted() {
 		console.log("mounted", this.$route.params.order);
+
 	},
 	watch: {
 		order() {
-			console.log('watch', this.order);
-			this.$router.go(0);
+			this.$parent.reloadView();
 		},
 	},
 	computed: {
