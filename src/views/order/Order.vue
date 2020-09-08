@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<a-page-header class="header" title="订单详情" :sub-title="this.$route.params.order"/>
+		<a-page-header class="header" title="订单详情" :sub-title="this.orderId"/>
 		<div>
 			<a-descriptions v-if="loaded">
 				<a-descriptions-item label="下单用户">
@@ -49,6 +49,11 @@ export default {
 		order: null,
 		loaded: false,
 	}),
+	computed: {
+		orderId() {
+			return this.$route.params.order;
+		},
+	},
 	methods: {
 		getTime(e) {
 			let time = new Date(e * 1000),
@@ -93,6 +98,7 @@ export default {
 					title: "无法使用订单",
 					content: "订单未支付",
 				});
+				this.$router.push("/pay/wechat/" + this.orderId);
 			} else if (this.order.user.id !== this.$store.state.User.id) {
 				this.$error({
 					title: "无法使用订单",
@@ -105,13 +111,13 @@ export default {
 				});
 				this.$router.push("/account/wechat");
 			} else {
-				this.$router.push("/order/plugin/upload/" + this.order.order);
+				this.$router.push("/order/" + this.orderId + "/plugin/upload/");
 			}
 		},
 	},
 	mounted() {
 		this.$axios.$post("?_=pay/getOrder", {
-			order: this.$route.params.order,
+			order: this.orderId,
 		}).then(response => {
 			if (response.status === 200) {
 				let dat = response.data;
@@ -138,6 +144,11 @@ export default {
 			});
 			console.log(error);
 		});
+	},
+	watch: {
+		orderId() {
+			this.$parent.reloadView();
+		},
 	},
 	components: {
 		Clr,

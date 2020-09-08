@@ -43,9 +43,7 @@ export default {
 	methods: {
 		handleMenuClick({key, keyPath}) {
 			console.log(key, keyPath);
-			if (key !== this.current[0]) {
-				this.$router.push("/" + key);
-			}
+			this.$router.push("/" + key);
 		},
 	},
 };

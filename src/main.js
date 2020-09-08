@@ -7,6 +7,7 @@ import Store from "./store";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
 import "./assets/main.css";
+import VueClipboard from "vue-clipboard2";
 
 if (process.env.NODE_ENV === "production") {
 	axios.defaults.baseURL = "./api/";
@@ -22,6 +23,7 @@ Vue.prototype["$axios"] = {
 	...axios,
 };
 Vue.use(Antd);
+Vue.use(VueClipboard);
 Vue.config.productionTip = false;
 
 new Vue({

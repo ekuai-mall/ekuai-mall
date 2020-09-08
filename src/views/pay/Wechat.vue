@@ -240,7 +240,6 @@ export default {
 				this.$router.push("/order/" + this.$route.params.order);
 			}
 			this.redirectTime -= 1;
-			console.log("timer");
 			setTimeout(this.timer, 1000);
 		},
 		forceCheck() {

@@ -48,14 +48,17 @@ const routesRaw = [{
 		path: "list",
 		component: () => import( /* webpackChunkName: "order" */ "@/views/order/List.vue"),
 	}, {
-		path: "plugin",
-		component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
+		path: ":order/plugin",
+		component: () => import( /* webpackChunkName: "plugin" */ "@/views/plugin/Plugin.vue"),
 		children: [{
 			path: "upload",
-			component: () => import( /* webpackChunkName: "util" */ "@/views/Utils/EmptyFrame.vue"),
+			component: () => import( /* webpackChunkName: "plugin" */ "@/views/plugin/upload/Upload.vue"),
 			children: [{
-				path: ":order",
-				component: () => import( /* webpackChunkName: "plugin" */ "@/views/plugin/upload/Upload.vue"),
+				path: "up",
+				component: () => import( /* webpackChunkName: "plugin" */ "@/views/plugin/upload/UpSteps.vue"),
+			},{
+				path: "down",
+				component: () => import( /* webpackChunkName: "plugin" */ "@/views/plugin/upload/Download.vue"),
 			}],
 		}],
 	}, {
