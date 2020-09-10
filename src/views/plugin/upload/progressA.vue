@@ -39,7 +39,7 @@ export default {
 	watch: {
 		percent() {
 			if (this.percent === 100) {
-				this.status = "";
+				this.status = "success";
 			}
 		},
 	},
